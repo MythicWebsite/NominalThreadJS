@@ -3,7 +3,7 @@
 // @license      GNU
 // @namespace    https://github.com/MythicWebsite
 // @homepageURL  https://github.com/MythicWebsite/NominalThreadJS
-// @version      1.0
+// @version      1.01
 // @description  The website for whatever reason doesn't tell you the nominal dimensions. This fixes that.
 // @author       Mythic
 // @match        http://theoreticalmachinist.com/Threads_UnifiedImperial.aspx
