@@ -1,5 +1,6 @@
 // ==UserScript==
 // @name         Thread Nominal Dimensions
+// @license      GNU
 // @namespace    https://github.com/MythicWebsite
 // @homepageURL  https://github.com/MythicWebsite/NominalThreadJS
 // @version      1.0
