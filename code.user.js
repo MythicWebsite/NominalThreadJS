@@ -3,7 +3,7 @@
 // @license      GNU
 // @namespace    https://github.com/MythicWebsite
 // @homepageURL  https://github.com/MythicWebsite/NominalThreadJS
-// @version      1.02
+// @version      1.03
 // @description  The website for whatever reason doesn't tell you the nominal dimensions. This fixes that.
 // @author       Mythic
 // @match        http://theoreticalmachinist.com/Threads_UnifiedImperial.aspx
@@ -20,6 +20,7 @@ document.getElementsByClassName("ContentMinorHeader")[0].remove()
 document.getElementsByClassName("GlossaryBox")[0].remove()
 document.querySelector('#cssmenu > ul').style.backgroundColor="#0d0d0d";
 Object.assign(document.getElementById('tb_Tol_Unified_3Wire').style, {backgroundColor:'#1b1f20',borderStyle:"solid",borderColor:"#4a4a4a",color:"#e9e9ed"})
+Object.assign(document.getElementById('AreaContent').style, {width:'fit-content'})
 
 const removeList = ['AreaSidebarRight','AreaFooter','SocialBar','ExternalThreadImage','ImageTmLogo']
 
@@ -37,7 +38,7 @@ for (let i = 0; i < removeList.length; i++) {
     removeElement(removeList[i])
 }
 
-editElement('TableCalc', {backgroundColor:'#1b1f20',color:"#e9e9ed"});
+editElement('TableCalc', {backgroundColor:'#1b1f20',color:"#e9e9ed",width:'420px'});
 editElement('CenterBoldText', {backgroundColor:'#1b1f20',borderStyle:"solid",borderColor:"#4a4a4a",color:"#e9e9ed"});
 editElement('tb_Tol_Unified_3Wire', {backgroundColor:'#1b1f20',color:"#e9e9ed"});
 editElement('versionText', {color:"#e9e9ed"});
