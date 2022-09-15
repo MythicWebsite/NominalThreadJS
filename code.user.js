@@ -3,13 +3,11 @@
 // @license      GNU
 // @namespace    https://github.com/MythicWebsite
 // @homepageURL  https://github.com/MythicWebsite/NominalThreadJS
-// @version      1.03
+// @version      1.04
 // @description  The website for whatever reason doesn't tell you the nominal dimensions. This fixes that.
 // @author       Mythic
 // @match        http://theoreticalmachinist.com/Threads_UnifiedImperial.aspx
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=theoreticalmachinist.com
-// @downloadURL  https://raw.githubusercontent.com/MythicWebsite/NominalThreadJS/master/code.user.js
-// @updateURL    https://raw.githubusercontent.com/MythicWebsite/NominalThreadJS/master/code.user.js
 // @grant        none
 // ==/UserScript==
 
@@ -22,7 +20,9 @@ document.querySelector('#cssmenu > ul').style.backgroundColor="#0d0d0d";
 Object.assign(document.getElementById('tb_Tol_Unified_3Wire').style, {backgroundColor:'#1b1f20',borderStyle:"solid",borderColor:"#4a4a4a",color:"#e9e9ed"})
 Object.assign(document.getElementById('AreaContent').style, {width:'fit-content'})
 
-const removeList = ['AreaSidebarRight','AreaFooter','SocialBar','ExternalThreadImage','ImageTmLogo']
+const removeList = ['AreaSidebarRight','AreaFooter','SocialBar','ExternalThreadImage','ImageTmLogo'];
+const linkElements = [];
+
 
 function removeElement(element) {
         document.getElementById(element).remove()
@@ -34,6 +34,38 @@ function editElement(element, styleEdit) {
     };
 }
 
+function createTitleElement(target,text) {
+    const ele = document.querySelectorAll('.TableCalc')[1].children[0].children[0].children[0].cloneNode(true);
+    ele.children[0].innerText = text;
+    target.appendChild(ele);
+}
+
+function createInfoElement(target,text1, id, link) {
+    const ele = document.querySelectorAll('.TableCalc')[1].children[0].children[0].children[2].cloneNode(true);
+    ele.children[0].innerText = text1;
+    ele.children[1].innerText = "";
+    ele.children[1].id = id;
+    linkElements.push({target:link,secondary:id})
+    target.appendChild(ele);
+    Object.assign(document.getElementById(id).style, {color:"#ff6f6f",fontSize:'15px'});
+}
+
+function createElement(target,type,content,colspan,style) {
+    const ele = document.createElement('tr');
+    const eleType = document.createElement(type);
+    const textNode = document.createTextNode(content);
+        if (colspan == true) {
+        eleType.colSpan = '2'
+    }
+    Object.assign(eleType.style, style)
+    eleType.appendChild(textNode)
+    ele.appendChild(eleType)
+    target.appendChild(ele)
+}
+
+// createElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.firstElementChild, 'th', 'title', true);
+// createElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.firstElementChild, 'span', 'content', false, {textAlign:'right',backgroundColor:'#1b1f20'});
+
 for (let i = 0; i < removeList.length; i++) {
     removeElement(removeList[i])
 }
@@ -44,6 +76,12 @@ editElement('tb_Tol_Unified_3Wire', {backgroundColor:'#1b1f20',color:"#e9e9ed"})
 editElement('versionText', {color:"#e9e9ed"});
 editElement('resultColor', {color:"#ff6f6f",fontSize:'15px'});
 editElement('TableCalc th', {color:"#e9e9ed",backgroundColor:"#0d0d0d"});
+
+createTitleElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.firstElementChild, 'Relevent Info');
+createInfoElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.firstElementChild, 'Major Diameter:', 'majDim', "lbl_Unified_Dias_Major");
+createInfoElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.firstElementChild, 'Pitch Diameter:', 'pitDim', "lbl_Unified_Dias_Pitch");
+createInfoElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.firstElementChild, 'Minor Diameter:', 'minDim', "lbl_Unified_Dias_Minor");
+createInfoElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.firstElementChild, 'Thread Depth:', 'depDim', "lbl_Unified_VShape_ThreadDepth");
 
 (function() {
     'use strict';
@@ -58,13 +96,19 @@ editElement('TableCalc th', {color:"#e9e9ed",backgroundColor:"#0d0d0d"});
             if (mutation.type === 'childList') {
                 // Elements have changed
                 for (let i = 0; i < elementList.length; i++) {
-                    const theElement = document.getElementById(elementList[i]);
+                    const elementName = elementList[i]
+                    const theElement = document.getElementById(elementName);
                     const changes = theElement.innerHTML.split("/");
                     if (changes.length == 2 && !theElement.innerHTML.includes('~')) {
                         const middleMath = (parseFloat(changes[0]) - parseFloat(changes[1]))/2 + parseFloat(changes[1]);
                         theElement.innerHTML = theElement.innerHTML + " ~ " + middleMath.toFixed(4).toString();
+                        for (let p = 0; p < linkElements.length; p++) {
+                            if (elementName == linkElements[p].target) {
+                                document.getElementById(linkElements[p].secondary).innerHTML = middleMath.toFixed(4).toString();
+                            }
+                        }
                     }
-                    console.log(document.getElementById(elementList[i]).innerHTML);
+                    //console.log(document.getElementById(elementList[i]).innerHTML);
                 }
             }
         }
