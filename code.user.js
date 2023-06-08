@@ -3,7 +3,7 @@
 // @license      GNU
 // @namespace    https://github.com/MythicWebsite
 // @homepageURL  https://github.com/MythicWebsite/NominalThreadJS
-// @version      1.04
+// @version      1.05
 // @description  The website for whatever reason doesn't tell you the nominal dimensions. This fixes that.
 // @author       Mythic
 // @match        http://theoreticalmachinist.com/Threads_UnifiedImperial.aspx
@@ -82,34 +82,48 @@ createInfoElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.f
 createInfoElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.firstElementChild, 'Pitch Diameter:', 'pitDim', "lbl_Unified_Dias_Pitch");
 createInfoElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.firstElementChild, 'Minor Diameter:', 'minDim', "lbl_Unified_Dias_Minor");
 createInfoElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.firstElementChild, 'Thread Depth:', 'depDim', "lbl_Unified_VShape_ThreadDepth");
+createInfoElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.firstElementChild, 'Steps:', 'stepDim', "blank");
+createInfoElement(document.querySelectorAll('.TableCalc')[0].firstElementChild.firstElementChild, 'Feed:', 'pitDim2', "lbl_Unified_VShape_Pitch");
+
 
 (function() {
     'use strict';
 
-    const elementList = ["lbl_Unified_Dias_Pitch", "lbl_Unified_Dias_Major", "lbl_Unified_Dias_Minor", "lbl_Unified_Dias_OverWire", "lbl_Unified_VShape_CrestFlat", "lbl_Unified_VShape_RootFlat", "lbl_Unified_VShape_RootRadius", "lbl_Unified_VShape_ThreadDepth", "lbl_Unified_VShape_ThreadFlank" ];
+    const elementList = ["lbl_Unified_Dias_Pitch", "lbl_Unified_Dias_Major", "lbl_Unified_Dias_Minor", "lbl_Unified_Dias_OverWire", "lbl_Unified_VShape_CrestFlat", "lbl_Unified_VShape_RootFlat", "lbl_Unified_VShape_RootRadius", "lbl_Unified_VShape_ThreadDepth", "lbl_Unified_VShape_ThreadFlank", "lbl_Unified_VShape_Pitch" ];
 
     const targetNode = document.body;
     const config = { childList: true, subtree: true };
+    var bounce = false;
+    var lastThread = "";
 
     const callback = function(mutationsList, observer) {
-        for(let mutation of mutationsList) {
-            if (mutation.type === 'childList') {
-                // Elements have changed
-                for (let i = 0; i < elementList.length; i++) {
-                    const elementName = elementList[i]
-                    const theElement = document.getElementById(elementName);
-                    const changes = theElement.innerHTML.split("/");
-                    if (changes.length == 2 && !theElement.innerHTML.includes('~')) {
-                        const middleMath = (parseFloat(changes[0]) - parseFloat(changes[1]))/2 + parseFloat(changes[1]);
-                        theElement.innerHTML = theElement.innerHTML + " ~ " + middleMath.toFixed(4).toString();
-                        for (let p = 0; p < linkElements.length; p++) {
-                            if (elementName == linkElements[p].target) {
-                                document.getElementById(linkElements[p].secondary).innerHTML = middleMath.toFixed(4).toString();
+        if (document.getElementById("Lbl_Unified_Definition").innerHTML != lastThread) {
+            if (bounce == false) {
+                bounce = true;
+                for(let mutation of mutationsList) {
+                    if (mutation.type === 'childList') {
+                        // Elements have changed
+                        for (let i = 0; i < elementList.length; i++) {
+                            const elementName = elementList[i]
+                            const theElement = document.getElementById(elementName);
+                            const changes = theElement.innerHTML.split("/");
+                            if (changes.length == 2 && !theElement.innerHTML.includes('~')) {
+                                const middleMath = (parseFloat(changes[0]) - parseFloat(changes[1]))/2 + parseFloat(changes[1]);
+                                theElement.innerHTML = theElement.innerHTML + " ~ " + middleMath.toFixed(4).toString();
+                                for (let p = 0; p < linkElements.length; p++) {
+                                    if (elementName == linkElements[p].target) {
+                                        document.getElementById(linkElements[p].secondary).innerHTML = middleMath.toFixed(4).toString();
+                                    }
+                                }
+                            } else if (theElement.id == "lbl_Unified_VShape_Pitch") {
+                                document.getElementById("pitDim2").innerHTML = theElement.innerHTML;
                             }
+                        document.getElementById("stepDim").innerHTML = Math.ceil(document.getElementById("depDim").innerHTML / .0025)
                         }
                     }
-                    //console.log(document.getElementById(elementList[i]).innerHTML);
                 }
+                lastThread = document.getElementById("Lbl_Unified_Definition").innerHTML;
+                bounce = false;
             }
         }
     };
